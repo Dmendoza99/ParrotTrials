@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cors());
 
-router.post("/ping", (req, res) => {
+router.get("/ping", (req, res) => {
   console.log(req.body);
   res.status(200).json({ message: "pong" });
 });

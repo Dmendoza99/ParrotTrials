@@ -42,7 +42,6 @@ historical.get("/:base/:versus", (req, res) => {
                 const date = new Date(data.time);
                 return date.toLocaleDateString() === realDate.toLocaleDateString();
               });
-              console.log(dates[0].rates[base], dates[0].rates[versus]);
               if (base === "EUR") {
                 res.status(200).json({ base, versus, date, rate: dates[0].rates[versus] });
               } else if (versus === "EUR") {
@@ -108,9 +107,9 @@ historical.get("/:base/:versus", (req, res) => {
                     if (base === "EUR") {
                       return { [date.time]: date.rates[versus] };
                     } else if (versus === "EUR") {
-                      return { [date.time]: 1 / date.rates[base] };
+                      return { [date.time]: String(1 / date.rates[base]) };
                     } else {
-                      return { [date.time]: (1 / date.rates[base]) * date.rates[versus] };
+                      return { [date.time]: String((1 / date.rates[base]) * date.rates[versus]) };
                     }
                   })
                   .reduce(function(result, current) {

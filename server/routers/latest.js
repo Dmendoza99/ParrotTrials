@@ -6,11 +6,17 @@ const { codes } = require("../currencies.js");
 // const API_ROUTE = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 const latestData = __dirname + "/../latestData.xml";
 
-var parser = new xml2js.Parser({
+const parser = new xml2js.Parser({
   trim: true,
   normalizeTags: true,
   mergeAttrs: true,
 });
+
+const parseData = result => {
+  return result["gesmes:envelope"]["cube"][0]["cube"][0]["cube"].filter(curr =>
+    codes.includes(curr.currency[0])
+  );
+};
 
 latest.get("/:currency$", async (req, res) => {
   let { currency } = req.params;
@@ -21,9 +27,7 @@ latest.get("/:currency$", async (req, res) => {
         parser.parseString(data, function(err, result) {
           if (err === null) {
             let retVal;
-            const realdata = result["gesmes:envelope"]["cube"][0]["cube"][0]["cube"].filter(curr =>
-              codes.includes(curr.currency[0])
-            );
+            const realdata = parseData(result);
             if (currency !== "EUR") {
               const trans = realdata.filter(cur => cur.currency[0] === currency)[0].rate[0];
               retVal = realdata.map(curr => {
@@ -41,10 +45,9 @@ latest.get("/:currency$", async (req, res) => {
             retVal = retVal.reduce(function(result, current) {
               return Object.assign(result, current);
             }, {});
-            const date = new Date();
             res.status(200).json({
               base: currency,
-              date: `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`,
+              date: `${new Date().toLocaleDateString().replace(/\//g, "-")}`,
               rates: { ...retVal },
             });
           } else {
@@ -56,7 +59,7 @@ latest.get("/:currency$", async (req, res) => {
       }
     });
   } else {
-    res.status(500).json({ success: false, message: "Invalid currency" });
+    res.status(400).json({ success: false, message: "Invalid currency" });
   }
 });
 
@@ -69,19 +72,23 @@ latest.get("/:base/:versus", async (req, res) => {
       if (err === null) {
         parser.parseString(data, function(err, result) {
           if (err === null) {
-            const realdata = result["gesmes:envelope"]["cube"][0]["cube"][0]["cube"].filter(curr =>
-              codes.includes(curr.currency[0])
-            );
+            const realdata = parseData(result);
             if (base === "EUR") {
               let finalRate = realdata.filter(curr => curr.currency[0] === versus)[0];
               finalRate = Object.values(finalRate).reduce(function(result, current) {
                 return Object.assign(result, current);
               }, {});
               res.status(200).json({ base, versus, rate: finalRate[0] });
+            } else if (versus === "EUR") {
+              let finalRate = realdata.filter(curr => curr.currency[0] === base)[0];
+              finalRate = Object.values(finalRate).reduce(function(result, current) {
+                return Object.assign(result, current);
+              }, {});
+              res.status(200).json({ base, versus, rate: 1 / finalRate[0] });
             } else {
               const transBase = realdata.filter(cur => cur.currency[0] === base)[0].rate[0];
               const transVersus = realdata.filter(cur => cur.currency[0] === versus)[0].rate[0];
-              res.status(200).json({ base, versus, rate: (1 / transBase) * transVersus });
+              res.status(200).json({ base, versus, rate: String((1 / transBase) * transVersus) });
             }
           } else {
             res.status(500).json({ success: false, message: "Error parsing our data" });
@@ -92,7 +99,7 @@ latest.get("/:base/:versus", async (req, res) => {
       }
     });
   } else {
-    res.status(500).json({ success: false, message: "Theres atleast one invalid currency" });
+    res.status(400).json({ success: false, message: "There's atleast one invalid currency" });
   }
 });
 

@@ -1,13 +1,6 @@
 import React, { PureComponent } from "react";
 import { Container, Row, Col, Input, InputGroupAddon, InputGroup } from "reactstrap";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
 const API_ROUTE = "http://localhost:3001";
@@ -29,7 +22,7 @@ class Home extends PureComponent {
     const onchangeInput = async e => {
       e.preventDefault();
       e.persist();
-      await this.setState({ [e.target.name]: e.target.value });
+      await this.setState({ [e.target.name]: e.target.value.replace(/\D/, "") });
       const { base, versus, versusTotal, baseTotal } = this.state;
       if (e.target.name === "baseTotal") {
         fetch(`${API_ROUTE}/latest/${codes[base]}/${codes[versus]}`)
@@ -82,8 +75,8 @@ class Home extends PureComponent {
                     type="select"
                     defaultValue={0}
                     value={base}
-                    onChange={async e => {
-                      await this.setState({ [e.target.name]: e.target.value });
+                    onChange={e => {
+                      this.setState({ [e.target.name]: e.target.value });
                     }}
                     name="base"
                     id="baseSelect">

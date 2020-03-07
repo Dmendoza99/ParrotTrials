@@ -4,9 +4,7 @@ body {
 body > div {
   height: 100vh;
 }
-.navbar {
-  height: 8vh;
-}
+
 .mainCard {
   height: 90vh !important;
   background-color: white;
@@ -21,4 +19,8 @@ body > div {
 
 .buttonGroup {
   margin-top: 2%;
+}
+
+.flagIcon {
+  height: 48px;
 }

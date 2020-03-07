@@ -40,6 +40,8 @@ class Home extends PureComponent {
       versusTotal: 1,
       data: {},
       timeLapse: 0,
+      codeBase: codes[0],
+      codeVersus: codes[0],
     };
   }
 
@@ -72,9 +74,15 @@ class Home extends PureComponent {
       });
   };
   render() {
-    const { base, versus, versusTotal, baseTotal, data } = this.state;
-    const onchangeSelect = async e => {
-      await this.setState({ [e.target.name]: e.target.value });
+    const { base, versus, versusTotal, baseTotal, data, codeBase, codeVersus } = this.state;
+    const onchangeSelect = e => {
+      this.setState({ [e.target.name]: e.target.value });
+      if (e.target.name === "versus") {
+        this.setState({ codeVersus: codes[e.target.value] });
+      }
+      if (e.target.name === "base") {
+        this.setState({ codeBase: codes[e.target.value] });
+      }
       this.updateGraph();
     };
 
@@ -106,6 +114,7 @@ class Home extends PureComponent {
           <Row>
             <Col xs={6}>
               <InputGroup>
+                <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
                 <Input
                   placeholder={`cantidad en ${codes[base]}`}
                   onChange={onchangeInput}
@@ -129,6 +138,7 @@ class Home extends PureComponent {
             </Col>
             <Col xs={6}>
               <InputGroup>
+                <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
                 <Input
                   placeholder={`cantidad en ${codes[versus]}`}
                   onChange={onchangeInput}

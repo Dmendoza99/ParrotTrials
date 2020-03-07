@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav } from "reactstrap";
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem } from "reactstrap";
 import { NavLink } from "react-router-dom";
 
 export default props => {
@@ -16,7 +16,11 @@ export default props => {
         </NavLink>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
-          <Nav className="mr-auto" navbar></Nav>
+          <Nav className="mr-auto" navbar>
+            <NavItem>
+              <NavLink to="/" className="nav-link">Inicio</NavLink>
+            </NavItem>
+          </Nav>
         </Collapse>
       </Navbar>
       {children}

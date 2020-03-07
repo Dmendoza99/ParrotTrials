@@ -3,3 +3,5 @@
 
 npm-debug.log*
 *.log
+historicalData.xml
+latestData.xml

@@ -12,7 +12,10 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "xml-parse": "^0.4.0",
+    "xml2js": "^0.4.23",
+    "xml2json": "^0.12.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

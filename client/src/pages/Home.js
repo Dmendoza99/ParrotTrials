@@ -21,7 +21,8 @@ import {
 } from "recharts";
 import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
-const API_ROUTE = "http://localhost:3001";
+// const API_ROUTE = "http://localhost:3001";
+const API_ROUTE = "http://18.191.218.42:3001";
 
 /**
  * timeLapse

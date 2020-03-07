@@ -1,5 +1,14 @@
 import React, { PureComponent } from "react";
-import { Container, Row, Col, Input, InputGroupAddon, InputGroup } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Input,
+  InputGroupAddon,
+  InputGroup,
+  ButtonGroup,
+  Button,
+} from "reactstrap";
 import {
   AreaChart,
   Area,
@@ -14,6 +23,12 @@ import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
 const API_ROUTE = "http://localhost:3001";
 
+/**
+ * timeLapse
+ * 0, es 1 semana
+ * 1, es 1 mes
+ * 2, es 3 meses
+ */
 class Home extends PureComponent {
   constructor(props) {
     super(props);
@@ -23,11 +38,45 @@ class Home extends PureComponent {
       baseTotal: 1,
       versusTotal: 1,
       data: {},
+      timeLapse: 0,
     };
   }
 
+  updateGraph = () => {
+    const { base, versus, timeLapse } = this.state;
+    const startDate = new Date();
+    if (timeLapse === 0) {
+      startDate.setDate(startDate.getDate() - 7);
+    } else if (timeLapse === 1) {
+      startDate.setMonth(startDate.getMonth() - 1);
+    } else if (timeLapse === 2) {
+      startDate.setMonth(startDate.getMonth() - 3);
+    }
+    const endDate = new Date();
+    fetch(
+      `${API_ROUTE}/historical/${codes[base]}/${
+        codes[versus]
+      }?start=${startDate
+        .toLocaleDateString()
+        .replace(/\//g, "-")}&end=${endDate.toLocaleDateString().replace(/\//g, "-")}`
+    )
+      .then(data => data.json())
+      .then(hist => {
+        this.setState({
+          data: Object.keys(hist.rates).map(rate => ({
+            date: rate,
+            rate: hist.rates[rate],
+          })),
+        });
+      });
+  };
   render() {
     const { base, versus, versusTotal, baseTotal, data } = this.state;
+    const onchangeSelect = async e => {
+      await this.setState({ [e.target.name]: e.target.value });
+      this.updateGraph();
+    };
+
     const onchangeInput = async e => {
       e.preventDefault();
       e.persist();
@@ -47,29 +96,12 @@ class Home extends PureComponent {
           });
       }
 
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 1);
-      const endDate = new Date();
-
-      fetch(
-        `${API_ROUTE}/historical/${codes[base]}/${
-          codes[versus]
-        }?start=${startDate
-          .toLocaleDateString()
-          .replace(/\//g, "-")}&end=${endDate.toLocaleDateString().replace(/\//g, "-")}`
-      )
-        .then(data => data.json())
-        .then(hist => {
-          this.setState({
-            data: Object.keys(hist.rates).map(rate => ({ date: rate, rate: hist.rates[rate] })),
-          });
-        });
+      this.updateGraph();
     };
 
     return (
       <HeaderLayout>
         <Container className="mainCard">
-          <h1>Tarea 1.1</h1>
           <Row>
             <Col xs={6}>
               <InputGroup>
@@ -84,9 +116,7 @@ class Home extends PureComponent {
                     type="select"
                     defaultValue={0}
                     value={base}
-                    onChange={e => {
-                      this.setState({ [e.target.name]: e.target.value });
-                    }}
+                    onChange={onchangeSelect}
                     name="base"
                     id="baseSelect">
                     {codes.map((code, i) => {
@@ -109,9 +139,7 @@ class Home extends PureComponent {
                     type="select"
                     defaultValue={1}
                     value={versus}
-                    onChange={e => {
-                      this.setState({ [e.target.name]: e.target.value });
-                    }}
+                    onChange={onchangeSelect}
                     name="versus"
                     id="versusSelect">
                     {codes.map((code, j) => {
@@ -122,8 +150,33 @@ class Home extends PureComponent {
               </InputGroup>
             </Col>
           </Row>
-          <br />
-          <Container style={{ height: "50%" }}>
+          <ButtonGroup size="lg" className="buttonGroup">
+            <Button
+              color="success"
+              onClick={async () => {
+                await this.setState({ timeLapse: 0 });
+                this.updateGraph();
+              }}>
+              1 Semana
+            </Button>
+            <Button
+              color="success"
+              onClick={async () => {
+                await this.setState({ timeLapse: 1 });
+                this.updateGraph();
+              }}>
+              1 Mes
+            </Button>
+            <Button
+              color="success"
+              onClick={async () => {
+                await this.setState({ timeLapse: 2 });
+                this.updateGraph();
+              }}>
+              3 Meses
+            </Button>
+          </ButtonGroup>
+          <Container className="graphContainer">
             <ResponsiveContainer width={"100%"} height={"100%"}>
               <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />

@@ -4,12 +4,21 @@ body {
 body > div {
   height: 100vh;
 }
-.navbar{
-  height:8vh
+.navbar {
+  height: 8vh;
 }
 .mainCard {
   height: 90vh !important;
   background-color: white;
-  padding: 2px 16px;
+  padding-top: 2%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.graphContainer {
+  height: 50%;
+  margin-top: 2%;
+}
+
+.buttonGroup {
+  margin-top: 2%;
 }

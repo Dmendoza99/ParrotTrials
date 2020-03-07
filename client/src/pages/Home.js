@@ -1,6 +1,15 @@
 import React, { PureComponent } from "react";
 import { Container, Row, Col, Input, InputGroupAddon, InputGroup } from "reactstrap";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Label,
+  CartesianGrid,
+} from "recharts";
 import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
 const API_ROUTE = "http://localhost:3001";
@@ -117,8 +126,14 @@ class Home extends PureComponent {
           <Container style={{ height: "50%" }}>
             <ResponsiveContainer width={"100%"} height={"100%"}>
               <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                {/* <CartesianGrid stroke="#ccc" strokeDasharray="5 5" /> */}
-                <XAxis dataKey="date" />
+                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                <XAxis dataKey="date">
+                  <Label
+                    value={`${codes[base]}/${codes[versus]}`}
+                    offset={0}
+                    position="insideBottom"
+                  />
+                </XAxis>
                 <YAxis />
                 <Tooltip />
                 <Area type="monotone" dataKey="rate" stroke="#8884d8" />

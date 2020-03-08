@@ -121,7 +121,7 @@ class Home extends PureComponent {
       <HeaderLayout>
         <Container className="mainCard">
           <Row>
-            <Row xs={4}>
+            <Row xs={6}>
               <Col xs={6}>
                 <center>
                   <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
@@ -151,7 +151,7 @@ class Home extends PureComponent {
                 </InputGroup>
               </Col>
             </Row>
-            <Row xs={4} style={{ flex: 1, flexDirection: "row" }}>
+            <Row xs={6}>
               <Col xs={6}>
                 <center>
                   <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>

@@ -1,14 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Input,
-  InputGroupAddon,
-  InputGroup,
-  ButtonGroup,
-  Button,
-} from "reactstrap";
+import { Container, Row, Col, Input, InputGroupAddon, InputGroup } from "reactstrap";
 import {
   AreaChart,
   Area,
@@ -74,7 +65,16 @@ class Home extends PureComponent {
       });
   };
   render() {
-    const { base, versus, versusTotal, baseTotal, data, codeBase, codeVersus } = this.state;
+    const {
+      base,
+      versus,
+      versusTotal,
+      baseTotal,
+      data,
+      codeBase,
+      codeVersus,
+      timeLapse,
+    } = this.state;
     const onchangeSelect = async e => {
       e.preventDefault();
       e.persist();
@@ -99,6 +99,7 @@ class Home extends PureComponent {
       e.persist();
       await this.setState({ [e.target.name]: e.target.value.replace(/\D/, "") });
       const { base, versus, versusTotal, baseTotal } = this.state;
+      console.log(`${API_ROUTE}/latest/${codes[base]}/${codes[versus]}`);
       if (e.target.name === "baseTotal") {
         fetch(`${API_ROUTE}/latest/${codes[base]}/${codes[versus]}`)
           .then(data => data.json())
@@ -120,85 +121,82 @@ class Home extends PureComponent {
       <HeaderLayout>
         <Container className="mainCard">
           <Row>
-            <Col xs={6}>
-              <center>
-                <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
-              </center>
-              <InputGroup>
-                <Input
-                  placeholder={`cantidad en ${codes[base]}`}
-                  onChange={onchangeInput}
-                  name="baseTotal"
-                  value={baseTotal}
-                />
-                <InputGroupAddon>
+            <Row xs={4}>
+              <Col xs={6}>
+                <center>
+                  <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
+                </center>
+              </Col>
+              <Col xs={6}>
+                <InputGroup>
                   <Input
-                    type="select"
-                    defaultValue={0}
-                    value={base}
-                    onChange={onchangeSelect}
-                    name="base"
-                    id="baseSelect">
-                    {codes.map((code, i) => {
-                      return <option value={i}>{code}</option>;
-                    })}
-                  </Input>
-                </InputGroupAddon>
-              </InputGroup>
-            </Col>
-            <Col xs={6}>
-              <center>
-                <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
-              </center>
-              <InputGroup>
-                <Input
-                  placeholder={`cantidad en ${codes[versus]}`}
-                  onChange={onchangeInput}
-                  name="versusTotal"
-                  value={versusTotal}
-                />
-                <InputGroupAddon>
+                    placeholder={`cantidad en ${codes[base]}`}
+                    onChange={onchangeInput}
+                    name="baseTotal"
+                    value={baseTotal}
+                  />
+                  <InputGroupAddon>
+                    <Input
+                      type="select"
+                      defaultValue={0}
+                      value={base}
+                      onChange={onchangeSelect}
+                      name="base"
+                      id="baseSelect">
+                      {codes.map((code, i) => {
+                        return <option value={i}>{code}</option>;
+                      })}
+                    </Input>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Col>
+            </Row>
+            <Row xs={4} style={{ flex: 1, flexDirection: "row" }}>
+              <Col xs={6}>
+                <center>
+                  <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
+                </center>
+              </Col>
+              <Col xs={6}>
+                <InputGroup>
                   <Input
-                    type="select"
-                    defaultValue={1}
-                    value={versus}
-                    onChange={onchangeSelect}
-                    name="versus"
-                    id="versusSelect">
-                    {codes.map((code, j) => {
-                      return <option value={j}>{code}</option>;
-                    })}
-                  </Input>
-                </InputGroupAddon>
-              </InputGroup>
+                    placeholder={`cantidad en ${codes[versus]}`}
+                    onChange={onchangeInput}
+                    name="versusTotal"
+                    value={versusTotal}
+                  />
+                  <InputGroupAddon>
+                    <Input
+                      type="select"
+                      defaultValue={1}
+                      value={versus}
+                      onChange={onchangeSelect}
+                      name="versus"
+                      id="versusSelect">
+                      {codes.map((code, j) => {
+                        return <option value={j}>{code}</option>;
+                      })}
+                    </Input>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Col>
+            </Row>
+            <Col xs={4}>
+              <Input
+                type="select"
+                defaultValue={0}
+                value={timeLapse}
+                name="timeLapse"
+                onChange={async e => {
+                  await this.setState({ timeLapse: parseInt(e.target.value) });
+                  this.updateGraph();
+                }}>
+                <option value={0}>1 Semana</option>
+                <option value={1}>1 Mes</option>
+                <option value={2}>3 Meses</option>
+              </Input>
             </Col>
           </Row>
-          <ButtonGroup size="lg" className="buttonGroup">
-            <Button
-              color="success"
-              onClick={async () => {
-                await this.setState({ timeLapse: 0 });
-                this.updateGraph();
-              }}>
-              1 Semana
-            </Button>
-            <Button
-              color="success"
-              onClick={async () => {
-                await this.setState({ timeLapse: 1 });
-                this.updateGraph();
-              }}>
-              1 Mes
-            </Button>
-            <Button
-              color="success"
-              onClick={async () => {
-                await this.setState({ timeLapse: 2 });
-                this.updateGraph();
-              }}>
-              3 Meses
-            </Button>
-          </ButtonGroup>
           <Container className="graphContainer">
             <ResponsiveContainer width={"100%"} height={"100%"}>
               <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>

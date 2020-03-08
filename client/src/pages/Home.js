@@ -75,14 +75,22 @@ class Home extends PureComponent {
   };
   render() {
     const { base, versus, versusTotal, baseTotal, data, codeBase, codeVersus } = this.state;
-    const onchangeSelect = e => {
-      this.setState({ [e.target.name]: e.target.value });
+    const onchangeSelect = async e => {
+      e.preventDefault();
+      e.persist();
+      await this.setState({ [e.target.name]: parseInt(e.target.value) });
       if (e.target.name === "versus") {
         this.setState({ codeVersus: codes[e.target.value] });
       }
       if (e.target.name === "base") {
         this.setState({ codeBase: codes[e.target.value] });
       }
+      const { base, versus, baseTotal } = this.state;
+      fetch(`${API_ROUTE}/latest/${codes[base]}/${codes[versus]}`)
+        .then(data => data.json())
+        .then(real => {
+          this.setState({ versusTotal: (baseTotal * parseFloat(real.rate)).toFixed(2) });
+        });
       this.updateGraph();
     };
 
@@ -113,8 +121,10 @@ class Home extends PureComponent {
         <Container className="mainCard">
           <Row>
             <Col xs={6}>
-              <InputGroup>
+              <center>
                 <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
+              </center>
+              <InputGroup>
                 <Input
                   placeholder={`cantidad en ${codes[base]}`}
                   onChange={onchangeInput}
@@ -137,8 +147,10 @@ class Home extends PureComponent {
               </InputGroup>
             </Col>
             <Col xs={6}>
-              <InputGroup>
+              <center>
                 <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
+              </center>
+              <InputGroup>
                 <Input
                   placeholder={`cantidad en ${codes[versus]}`}
                   onChange={onchangeInput}

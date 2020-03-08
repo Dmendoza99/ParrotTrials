@@ -73,7 +73,9 @@ latest.get("/:base/:versus", async (req, res) => {
         parser.parseString(data, function(err, result) {
           if (err === null) {
             const realdata = parseData(result);
-            if (base === "EUR") {
+            if (base === "EUR" && versus === "EUR") {
+              res.status(200).json({ base, versus, rate: 1 });
+            } else if (base === "EUR") {
               let finalRate = realdata.filter(curr => curr.currency[0] === versus)[0];
               finalRate = Object.values(finalRate).reduce(function(result, current) {
                 return Object.assign(result, current);

@@ -25,3 +25,11 @@ body > div {
   height: 48px;
   padding-bottom: 10px;
 }
+
+select[name="timeLapse"] {
+  margin-bottom: 1%;
+}
+
+#reverseFlow {
+  flex-flow: row-reverse;
+}

@@ -12,8 +12,8 @@ import {
 } from "recharts";
 import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
-// const API_ROUTE = "http://localhost:3001";
-const API_ROUTE = "http://18.191.218.42:3001";
+const API_ROUTE = "http://localhost:3001";
+// const API_ROUTE = "http://18.191.218.42:3001";
 
 /**
  * timeLapse
@@ -37,6 +37,7 @@ class Home extends PureComponent {
       errorGraphMessage: "",
       codeBase: codes[0],
       codeVersus: codes[0],
+      rates: [],
     };
   }
 
@@ -95,6 +96,7 @@ class Home extends PureComponent {
       errorMessage,
       errorGraphMessage,
       showGraphError,
+      rates,
     } = this.state;
 
     const onchangeSelect = async e => {
@@ -105,7 +107,14 @@ class Home extends PureComponent {
         this.setState({ codeVersus: codes[e.target.value] });
       }
       if (e.target.name === "base") {
+        const { base } = this.state;
+
         this.setState({ codeBase: codes[e.target.value] });
+        fetch(`${API_ROUTE}/latest/${codes[base]}`)
+          .then(data => data.json())
+          .then(real => {
+            this.setState({ rates: real["rates"] });
+          });
       }
       const { base, versus, baseTotal } = this.state;
       fetch(`${API_ROUTE}/latest/${codes[base]}/${codes[versus]}`)
@@ -226,7 +235,18 @@ class Home extends PureComponent {
               </center>
             </Col>
           </Row>
-          <ResponsiveContainer width={"100%"} height={"75%"}>
+          <Row xs={6} id="prueba">
+            {Object.keys(rates).map(rate => {
+              console.log(rate);
+              return (
+                <p>
+                  <img src={`/images/${rate}.png`} className="flagIcon" alt="wenas"></img>
+                  {` ${parseFloat(rates[rate]).toFixed(2)}`}
+                </p>
+              );
+            })}
+          </Row>
+          <ResponsiveContainer width={"100%"} height={"50%"}>
             <AreaChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid stroke="#1a1a1a" strokeDasharray="5 5" />
               <XAxis dataKey="date">
@@ -241,6 +261,7 @@ class Home extends PureComponent {
               <Area type="monotone" dataKey="rate" fill="#f0ad4e" stroke="#1a1a1a" />
             </AreaChart>
           </ResponsiveContainer>
+
           <Toast isOpen={showError}>
             <ToastHeader icon="danger">Error en conversion</ToastHeader>
             <ToastBody>{errorMessage}</ToastBody>

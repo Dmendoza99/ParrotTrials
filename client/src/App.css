@@ -13,7 +13,6 @@ body > div {
 }
 
 .graphContainer {
-  height: 50%;
   margin-top: 2%;
 }
 
@@ -30,6 +29,22 @@ select[name="timeLapse"] {
   margin-bottom: 1%;
 }
 
-#reverseFlow {
-  flex-flow: row-reverse;
+.currencyContainer {
+  display: flex;
+  flex: 1;
+  margin-top: 2%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.currencyContainer img {
+  margin-top: 50%;
+}
+
+#timelapseContainer {
+  background-color: green;
+  display: inline;
+  align-items: center;
+  align-content: center;
 }

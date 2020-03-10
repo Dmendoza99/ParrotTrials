@@ -1,15 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Input,
-  InputGroupAddon,
-  InputGroup,
-  Toast,
-  ToastHeader,
-  ToastBody,
-} from "reactstrap";
+import { Container, Row, Col, Input, Toast, ToastHeader, ToastBody } from "reactstrap";
 import {
   AreaChart,
   Area,
@@ -22,8 +12,8 @@ import {
 } from "recharts";
 import HeaderLayout from "./../layouts/HeaderLayout";
 import { codes } from "../currencies";
-const API_ROUTE = "http://localhost:3001";
-// const API_ROUTE = "http://18.191.218.42:3001";
+// const API_ROUTE = "http://localhost:3001";
+const API_ROUTE = "http://18.191.218.42:3001";
 
 /**
  * timeLapse
@@ -163,108 +153,102 @@ class Home extends PureComponent {
     return (
       <HeaderLayout>
         <Container className="mainCard">
-          <Row xs={6} id="reverseFlow">
-            <Col xs={2}>
-              <center>
-                <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
-              </center>
-            </Col>
-            <Col xs={4}>
-              <InputGroup>
+          <Row xs={12} id="wenas">
+            <Col xs={6} className="currencyContainer">
+              <Row xs={2}>
                 <Input
                   placeholder={`cantidad en ${codes[base]}`}
                   onChange={onchangeInput}
                   name="baseTotal"
                   value={baseTotal}
                 />
-                <InputGroupAddon>
-                  <Input
-                    type="select"
-                    defaultValue={0}
-                    value={base}
-                    onChange={onchangeSelect}
-                    name="base"
-                    id="baseSelect">
-                    {codes.map((code, i) => {
-                      return <option value={i}>{code}</option>;
-                    })}
-                  </Input>
-                </InputGroupAddon>
-              </InputGroup>
+                <Input
+                  type="select"
+                  defaultValue={0}
+                  value={base}
+                  onChange={onchangeSelect}
+                  name="base"
+                  id="baseSelect">
+                  {codes.map((code, i) => {
+                    return <option value={i}>{code}</option>;
+                  })}
+                </Input>
+              </Row>
+              <Row xs={2}>
+                <center>
+                  <img src={`/images/${codeBase}.png`} className="flagIcon" alt="wenas"></img>
+                </center>
+              </Row>
             </Col>
-          </Row>
-          <Row xs={6} id="reverseFlow">
-            <Col xs={2}>
-              <center>
-                <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
-              </center>
-            </Col>
-            <Col xs={4}>
-              <InputGroup>
+            <Col xs={6} className="currencyContainer">
+              <Row xs={2}>
                 <Input
                   placeholder={`cantidad en ${codes[versus]}`}
                   onChange={onchangeInput}
                   name="versusTotal"
                   value={versusTotal}
                 />
-                <InputGroupAddon>
+                <Input
+                  type="select"
+                  defaultValue={1}
+                  value={versus}
+                  onChange={onchangeSelect}
+                  name="versus"
+                  id="versusSelect">
+                  {codes.map((code, j) => {
+                    return <option value={j}>{code}</option>;
+                  })}
+                </Input>
+              </Row>
+              <Row xs={2}>
+                <center>
+                  <img src={`/images/${codeVersus}.png`} className="flagIcon" alt="wenas"></img>
+                </center>
+              </Row>
+            </Col>
+            <Col xs={12}>
+              <center>
+                <Col xs={6}>
                   <Input
                     type="select"
-                    defaultValue={1}
-                    value={versus}
-                    onChange={onchangeSelect}
-                    name="versus"
-                    id="versusSelect">
-                    {codes.map((code, j) => {
-                      return <option value={j}>{code}</option>;
-                    })}
+                    defaultValue={0}
+                    value={timeLapse}
+                    name="timeLapse"
+                    onChange={async e => {
+                      await this.setState({ timeLapse: parseInt(e.target.value) });
+                      this.updateGraph();
+                    }}>
+                    <option value={0}>1 Semana</option>
+                    <option value={1}>1 Mes</option>
+                    <option value={2}>3 Meses</option>
                   </Input>
-                </InputGroupAddon>
-              </InputGroup>
+                </Col>
+              </center>
             </Col>
           </Row>
-          <Row xs={6} id="reverseFlow">
-            <Col xs={6}>
-              <Input
-                type="select"
-                defaultValue={0}
-                value={timeLapse}
-                name="timeLapse"
-                onChange={async e => {
-                  await this.setState({ timeLapse: parseInt(e.target.value) });
-                  this.updateGraph();
-                }}>
-                <option value={0}>1 Semana</option>
-                <option value={1}>1 Mes</option>
-                <option value={2}>3 Meses</option>
-              </Input>
-            </Col>
-          </Row>
-          <Container className="graphContainer">
-            <ResponsiveContainer width={"100%"} height={"100%"}>
-              <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid stroke="#1a1a1a" strokeDasharray="5 5" />
-                <XAxis dataKey="date">
-                  <Label
-                    value={`${codes[base]}/${codes[versus]}`}
-                    offset={0}
-                    position="insideBottom"
-                  />
-                </XAxis>
-                <YAxis />
-                <Tooltip />
-                <Area type="monotone" dataKey="rate" fill="#f0ad4e" stroke="#1a1a1a" />
-              </AreaChart>
-            </ResponsiveContainer>
-            <Toast isOpen={showError}>
-              <ToastHeader icon="danger">Error en conversion</ToastHeader>
-              <ToastBody>{errorMessage}</ToastBody>
-            </Toast>
-            <Toast isOpen={showGraphError}>
-              <ToastHeader icon="danger">Error en grafica</ToastHeader>
-              <ToastBody>{errorGraphMessage}</ToastBody>
-            </Toast>
-          </Container>
+          <ResponsiveContainer width={"100%"} height={"75%"}>
+            <AreaChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+              <CartesianGrid stroke="#1a1a1a" strokeDasharray="5 5" />
+              <XAxis dataKey="date">
+                <Label
+                  value={`${codes[base]}/${codes[versus]}`}
+                  offset={0}
+                  position="insideBottom"
+                />
+              </XAxis>
+              <YAxis />
+              <Tooltip />
+              <Area type="monotone" dataKey="rate" fill="#f0ad4e" stroke="#1a1a1a" />
+            </AreaChart>
+          </ResponsiveContainer>
+          <Toast isOpen={showError}>
+            <ToastHeader icon="danger">Error en conversion</ToastHeader>
+            <ToastBody>{errorMessage}</ToastBody>
+          </Toast>
+          <Toast isOpen={showGraphError}>
+            <ToastHeader icon="danger">Error en grafica</ToastHeader>
+            <ToastBody>{errorGraphMessage}</ToastBody>
+          </Toast>
         </Container>
       </HeaderLayout>
     );
